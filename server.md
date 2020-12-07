@@ -164,13 +164,136 @@ console.log('Server running at http://127.0.0.1:8081/');
       console.log('创建目录成功')
     })
     ```
+
 * `fs.writeFile` 创建写入文件
+
+  * `fs.writeFile(path, content, option, callback)`
+    * path: 路径，只能在已存在目录创建文件，若文件已存在会直接替换为新文件
+    * content：文件内容 `<string> | <Buffer> | <TypedArray> | <DataView>`
+    * option: 配置项 可省略
+      * encoding: 默认值 `utf8`
+      * mode: integer 默认值 `0o666`
+      * flag: 默认值 `w`
+    * callback: 回调函数 接收一个错误信息
+
+  ```javascript
+  // 需要保证 html文件夹 路径存在
+    fs.writeFile('./html/index.html', '你好 nodejs!!！', function (err) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      console.log('创建成功')
+    })
+  ```
+
 * `fs.appendFile` 追加文件
+
+  * `fs.appendFile(path, content, option, callback)`
+  * 参数与 `writeFile` 一致 但是如果文件已存在 则直接在文件后面增加内容
+
+  ```javascript
+  // 需要保证 html文件夹 路径存在
+    fs.appendFile('./css/index.css', ' h2 {color: red;}', function(err) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      console.log('创建或追加成功')
+    })
+  ```
+
 * `fs.readFile` 读取文件
+
+  * `fs.readFile(path, option, callback)`
+    * path: 路径 需为已存在路径 若不存在返回错误信息
+    * option： 可选 `String | Object` ， String 时 为指定文件编码 Object 时如下
+      * encoding：默认 `utf8`
+      * flag: 默认 `r`
+    * callback(err, data)
+      * err: 错误信息
+      * data: 读取到的数据 为二进制数据
+
+  ```javascript
+    fs.readFile('./html/index.html', function(err, data) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      console.log(data)
+      console.log(data.toString()) // 转字符串
+    })
+  ```
+
 * `fs.readdir` 读取目录
-* `fs.rename` 重命名
-* `fs.rmdir` 删除目录
+
+  * `fs.readdir(path, option, callback)`
+    * path: String | Buffer | URL
+    * option: 可选 String | Object
+    * callback: 回调函数
+
+  ```javascript
+    fs.readdir('./', function(err, data) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      console.log(data) // 得到一个数组
+    })
+  ```
+
+* `fs.rename` 重命名 功能： 1 表示重命名 2 表示移动文件
+
+  * `fs.rename(oldPath, newPath, callback)`
+    * olPath: 旧的路径
+    * newPath: 新的路径
+    * callback: 回调函数
+  * 旧的路径 与 新的路径仅为文件名不一样时表示重命名文件 仅为文件夹名称不一样的表示移动文件 都不一样是表示移动并重命名文件
+
+  ```javascript
+    fs.rename('./css/index.css', './css/css/new.css', function (err) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      console.log('重命名或移动文件成功')
+    })
+  ```
+
+* `fs.rmdir` 删除目录 不能删除带文件的目录
+
+  * `fs,rmdir(path, option, callback)`
+    * path: 路径
+    * option：配置对象 详看文档
+    * callback：回调函数
+
+  ```javascript
+    fs.rmdir('./css/common', function (err) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      console.log('删除成功')
+    })
+  ```
+
 * `fs.unlink` 删除文件
+  * `fs.unlink(path, callback)`
+    * path: 路径
+    * callback: 回调函数
+
+  ```javascript
+  fs.unlink('./css/css/new.css', function(err) {
+    if (err) {
+      console.log(err)
+      return
+    }
+    console.log('删除成功')
+  })
+  ```
+
+* 练习1, 判断服务器上是否有 upload 目录 如果有 不做操作 如果没有新建一个目录 答案代码： `fsTest/test1.js`  使用 `mkdirp` 插件更方便(属于 外部插件需要安装)
+* 练习2, 在wwwroot 文件夹中 有images css js index.html, 找出文件夹里面的所有目录， 并存放于一个数组中。答案代码: `fsTest/test2.js`
 
 <br />
 <br />
