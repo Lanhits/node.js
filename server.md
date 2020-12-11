@@ -295,6 +295,79 @@ console.log('Server running at http://127.0.0.1:8081/');
 * 练习1, 判断服务器上是否有 upload 目录 如果有 不做操作 如果没有新建一个目录 答案代码： `fsTest/test1.js`  使用 `mkdirp` 插件更方便(属于 外部插件需要安装)
 * 练习2, 在wwwroot 文件夹中 有images css js index.html, 找出文件夹里面的所有目录， 并存放于一个数组中。答案代码: `fsTest/test2.js`
 
+* `fs.createReadStream`
+  * `fs.createReadStream(path, option)`
+    * path: 路径 String | Buffer | URL
+    * option: 配置项， 可选 具体查官网
+  * 返回：`readStream`, 可读流对象, 可通过 `readStream.on('事件名', callback)` 来监听如下事件：
+    * `'data'`, 读到数据是触发
+    * `'end'`, 结束时触发
+    * `'error'`， 错误时触发
+
+    ```javascript
+      const fs = require('fs')
+
+      let readStream = fs.createReadStream('./wwwroot/output.text')
+
+      let count = 0
+      let str = ''
+      readStream.on('data', function (data) {
+        str += data
+        count++
+      })
+
+      readStream.on('end', function () {
+        console.log(str)
+        console.log(count)
+      })
+
+      readStream.on('error', function (err) {
+        console.log(err)
+      })
+    ```
+
+* `fs.createWriteStream`
+  * `fs.createWriteStream(path, option)`
+    * path: 路径(写入的文件路径，存在的文件会替换 不存在的文件会新增)， String | Buffer | URl
+    * 配置项(可选)：String | Object，具体项查官网
+  * 返回: writeStream (可写流), 可通过 `writeStream.on('事件名', callback)` 来监听如下事件：
+    * `'finish'`, 写入完成时触发
+    * `'error'`， 错误时触发
+
+    ```javascript
+  
+      let fs = require('fs')
+      // 造数据
+      let str = ''
+      for(let i  = 0; i < 50000; i++) {
+        str += `第${i}文本，拉达克放假啦解放啦\n`
+      }
+
+      console.log(str)
+      let writeStream = fs.createWriteStream('./wwwroot/output.text')
+      writeStream.write(str)
+
+      // 标记写入完成
+      writeStream.end()
+
+      // 监听写入完成
+      writeStream.on('finish', function () {
+        console.log('写入完成')
+      })
+    ```
+
+* `管道流`
+  主要用于大文件的复制
+
+```javascript
+  const fs = require('fs')
+
+  const writeSteam = fs.createWriteStream('./wwwroot/bbb.jpg')
+  const readStream = fs.createReadStream('./aaa.jpg')
+
+  readStream.pipe(writeSteam)
+```
+
 <br />
 <br />
 <br />
